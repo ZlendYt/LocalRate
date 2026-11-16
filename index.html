@@ -1,1163 +1,1906 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LocalRate — Управление репутацией на Яндекс.Картах, 2ГИС, Google и Авито</title>
-  <meta name="description" content="Поднимаем рейтинг бизнеса на Яндекс.Картах, 2ГИС, Google и Авито до 4.8–4.9. Живые отзывы с прогретых местных аккаунтов. Оплата строго по факту публикации.">
-  
-  <!-- Google Fonts: Inter & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-          },
-          colors: {
-            ink: {
-              DEFAULT: '#0A2540',
-              muted: '#425466',
-              subtle: '#697386',
-            },
-            surface: {
-              DEFAULT: '#FFFFFF',
-              alt: '#F8FAFC',
-              sunken: '#F1F5F9',
-            },
-            hairline: {
-              DEFAULT: '#E2E8F0',
-              strong: '#CBD5E1',
-            },
-            brand: {
-              DEFAULT: '#1B4332',
-              hover: '#143326',
-              accent: '#15803D',
-              soft: '#ECFDF5',
-              border: '#A7F3D0',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>LocalRate — Управление репутацией и отзывами для бизнеса</title>
   <style>
+    :root {
+      --bg: #F6F7F9;
+      --surface: #FFFFFF;
+      --text: #14171F;
+      --muted: #5A6270;
+      --accent: #E53935;
+      --accent-hover: #C62828;
+      --tg: #24A1DE;
+      --tg-hover: #1D8CC2;
+      --green: #10B981;
+      --green-bg: #ECFDF5;
+      --border: #E5E7EB;
+      --gold: #F59E0B;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #0A2540;
-      background-color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-    .tnum {
-      font-variant-numeric: tabular-nums;
+
+    .container {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 16px;
     }
-    /* Плавный переход для табов и аккордеонов */
-    .tab-panel {
-      animation: fadeIn 180ms ease-out;
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 64px;
+      padding: 8px 0;
+      gap: 8px;
     }
-    details > summary {
-      list-style: none;
+    .logo {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+      flex-shrink: 0;
     }
-    details > summary::-webkit-details-marker {
+    .logo-icon {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #E53935 0%, #F59E0B 100%);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.25);
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.2);
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-tg {
+      background: var(--tg);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(36, 161, 222, 0.2);
+    }
+    .btn-tg:hover { background: var(--tg-hover); }
+    .btn-outline {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: #F3F4F6; }
+
+    .user-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-bg);
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      max-width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-pill button {
+      background: none;
+      border: none;
+      color: #047857;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 960px) { .nav-links { display: none; } }
+    @media (max-width: 600px) {
+      .logo span:last-child { font-size: 17px; }
+      .nav-actions .btn { padding: 7px 9px; font-size: 12px; border-radius: 8px; }
+      .hide-mobile { display: none; }
+      .user-pill { max-width: 125px; padding: 5px 8px; font-size: 11px; }
+    }
+
+    /* Hero */
+    .hero {
+      padding: 36px 0 32px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #FEF2F2;
+      color: var(--accent);
+      border: 1px solid #FECACA;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      max-width: 100%;
+    }
+    h1 {
+      font-size: clamp(26px, 6.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      max-width: 860px;
+      margin: 0 auto 14px;
+      word-wrap: break-word;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 670px;
+      margin: 0 auto 24px;
+    }
+    .hero-btns {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .hero-btns .btn { padding: 13px 20px; font-size: 15px; }
+    @media (max-width: 540px) {
+      .hero-btns { flex-direction: column; }
+      .hero-btns .btn { width: 100%; }
+    }
+
+    /* Stats Strip */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    @media (max-width: 768px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 14px 10px; }
+    }
+    .stat-item strong { display: block; font-size: 20px; font-weight: 800; color: var(--text); }
+    .stat-item span { font-size: 12px; color: var(--muted); display: block; }
+
+    /* Bonus Banner */
+    .bonus-banner {
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 22px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow-md);
+    }
+    .bonus-banner.active { background: linear-gradient(135deg, #065F46 0%, #047857 100%); }
+    .bonus-banner h3 { font-size: 18px; margin-bottom: 4px; }
+    .bonus-banner p { color: #CBD5E1; font-size: 13px; }
+    .bonus-banner.active p { color: #D1FAE5; }
+    @media (max-width: 600px) { .bonus-banner .btn { width: 100%; } }
+
+    /* Referral Alert Banner */
+    .ref-arrival-banner {
+      display: none;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      color: #92400E;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ref-arrival-banner.show { display: flex; }
+    @media (max-width: 600px) { .ref-arrival-banner .btn { width: 100%; } }
+
+    /* Rating Calculator */
+    .calc-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 18px;
+      margin: 24px 0 48px;
+      box-shadow: var(--shadow-sm);
+    }
+    .calc-header { margin-bottom: 20px; }
+    .calc-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 4px; }
+    .calc-header p { color: var(--muted); font-size: 14px; }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 20px;
+      align-items: center;
+    }
+    @media (max-width: 820px) { .calc-grid { grid-template-columns: 1fr; } }
+    .calc-inputs { display: flex; flex-direction: column; gap: 14px; }
+    .calc-field label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+    .calc-field input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #F9FAFB;
+      color: var(--text);
+    }
+    .calc-field input:focus { outline: none; border-color: var(--accent); background: #fff; }
+    .target-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .target-pill {
+      padding: 10px 6px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #F9FAFB;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .target-pill.active { background: #FEF2F2; border-color: var(--accent); color: var(--accent); }
+    .calc-result-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 18px 16px;
+    }
+    .calc-res-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .calc-needed-num { font-size: 32px; font-weight: 900; color: var(--accent); line-height: 1; }
+    .calc-needed-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .calc-rec-plan {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 12px 0 16px;
+      font-size: 13px;
+    }
+    .calc-rec-plan strong { display: block; font-size: 15px; margin-bottom: 2px; }
+    .calc-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 480px) { .calc-btns { grid-template-columns: 1fr; } }
+
+    /* Pricing / Catalog */
+    .section-title { text-align: center; margin-bottom: 24px; }
+    .section-title h2 {
+      font-size: clamp(24px, 5.5vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .section-title p { color: var(--muted); font-size: 14px; max-width: 600px; margin: 0 auto; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 52px;
+    }
+    @media (max-width: 960px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; gap: 16px; } }
+
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+    }
+    .price-card.popular { border: 2px solid var(--accent); }
+    .popular-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      z-index: 15;
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+    }
+
+    /* Product Cover Image / Slider */
+    .card-media {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #F1F3F5;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+    .slide {
+      min-width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      z-index: 10;
+      opacity: 0.8;
+      transition: 0.2s;
+    }
+    .slider-arrow:hover { opacity: 1; background: rgba(0,0,0,0.8); }
+    .slider-arrow.prev { left: 8px; }
+    .slider-arrow.next { right: 8px; }
+    .slider-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      z-index: 10;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .dot.active { background: #fff; width: 16px; border-radius: 3px; }
+
+    .card-media-fallback {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      background: linear-gradient(180deg, #F8F9FA 62%, #E5E7EB 100%);
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-media.no-img .slider-track { display: none; }
+    .card-media.no-img .slider-arrow, .card-media.no-img .slider-dots { display: none; }
+    .card-media.no-img .card-media-fallback { display: flex; }
+
+    .fb-brand { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .fb-title { font-size: clamp(22px, 6vw, 28px); font-weight: 900; line-height: 1.05; color: var(--text); text-transform: uppercase; margin: 6px 0 4px; }
+    .fb-sub { font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; }
+    .fb-stars {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      align-self: flex-end;
+      min-width: 145px;
+    }
+    .fb-stars-row { color: #F59E0B; font-size: 18px; letter-spacing: 2px; }
+    .fb-rating { font-weight: 800; font-size: 16px; color: var(--text); margin-top: 2px; }
+    .fb-bottom { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .fb-price-pill { background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; padding: 7px 12px; border-radius: 8px; }
+    .fb-note-pill { background: #fff; color: var(--text); font-weight: 700; font-size: 10px; padding: 8px 10px; border-radius: 8px; text-transform: uppercase; }
+
+    .card-body {
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .plan-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .plan-count { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .plan-price-wrap {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .old-price {
+      font-size: 15px;
+      color: var(--muted);
+      text-decoration: line-through;
+      margin-right: 6px;
       display: none;
     }
+    .current-price { font-size: 26px; font-weight: 800; }
+    .per-item { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .plan-list {
+      list-style: none;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #374151;
+    }
+    .plan-list li { padding: 4px 0 4px 18px; position: relative; }
+    .plan-list li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 800; }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Review Examples Section */
+    .examples-section { margin-bottom: 52px; }
+    .niche-tabs {
+      display: flex;
+      justify-content: flex-start;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 8px;
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+      scrollbar-width: none;
+    }
+    .niche-tabs::-webkit-scrollbar { display: none; }
+    @media (min-width: 820px) { .niche-tabs { justify-content: center; flex-wrap: wrap; } }
+    .niche-tab {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .niche-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .examples-grid { grid-template-columns: 1fr; } }
+    .review-example-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rev-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .rev-author { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .rev-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rev-name { font-weight: 700; font-size: 14px; }
+    .rev-meta { font-size: 11px; color: var(--muted); }
+    .rev-stars { color: #F59E0B; font-size: 13px; letter-spacing: 1px; flex-shrink: 0; }
+    .rev-text { font-size: 13px; color: #272B33; line-height: 1.55; }
+    .rev-tag {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 700;
+      background: #F1F5F9;
+      color: #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Referral Program Section */
+    .ref-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 18px;
+      margin-bottom: 52px;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+    @media (max-width: 820px) { .ref-section { grid-template-columns: 1fr; } }
+    .ref-badge {
+      display: inline-block;
+      background: var(--green-bg);
+      color: #065F46;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .ref-section h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 8px; }
+    .ref-section p { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .ref-rules { list-style: none; font-size: 13px; color: var(--text); }
+    .ref-rules li { padding: 4px 0 4px 18px; position: relative; }
+    .ref-rules li::before { content: "•"; position: absolute; left: 5px; color: var(--accent); font-weight: 900; }
+    .ref-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 16px; min-width: 0; }
+    .ref-link-row { display: flex; gap: 8px; margin-top: 10px; }
+    @media (max-width: 480px) { .ref-link-row { flex-direction: column; } }
+    .ref-link-input {
+      width: 100%;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    /* How it works */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 52px;
+    }
+    @media (max-width: 820px) { .steps-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .steps-grid { grid-template-columns: 1fr; } }
+    .step-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #FEF2F2;
+      color: var(--accent);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .step-card h4 { font-size: 15px; margin-bottom: 4px; }
+    .step-card p { font-size: 13px; color: var(--muted); }
+
+    /* FAQ */
+    .faq-list { max-width: 820px; margin: 0 auto 52px; display: flex; flex-direction: column; gap: 10px; }
+    details { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    summary {
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font-size: 20px; color: var(--muted); flex-shrink: 0; }
+    details[open] summary::after { content: "−"; }
+    details p { margin-top: 10px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+    /* Footer */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 28px 0 36px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer-links { display: flex; justify-content: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    @media (max-width: 480px) {
+      .footer-links { flex-direction: column; }
+      .footer-links .btn { width: 100%; }
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: 400px;
+      border-radius: 16px;
+      padding: 22px 18px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .tabs { display: flex; background: #F3F4F6; border-radius: 10px; padding: 4px; margin-bottom: 16px; margin-top: 8px; }
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    .form-group input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 16px; }
+    .form-group input:focus { outline: none; border-color: var(--accent); }
+    .form-note {
+      background: var(--green-bg);
+      color: #065F46;
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .error-msg { color: var(--accent); font-size: 13px; margin-bottom: 10px; display: none; }
   </style>
 </head>
-<body class="bg-white text-ink selection:bg-brand-soft selection:text-brand">
+<body>
 
-  <!-- =========================================================
-       1. ШАПКА САЙТА (STICKY HEADER)
-  ========================================================== -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-hairline">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- Логотип -->
-      <a href="#" class="flex items-center gap-2.5 group focus:outline-none">
-        <span class="w-8 h-8 rounded-md bg-brand text-white flex items-center justify-center font-mono font-semibold text-sm tracking-tight">
-          LR
-        </span>
-        <div class="flex flex-col">
-          <span class="font-semibold text-base tracking-tight text-ink leading-none">LocalRate</span>
-          <span class="text-[11px] font-mono text-ink-subtle tracking-wide mt-0.5">SERM &amp; REPUTATION</span>
-        </div>
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">
+        <span class="logo-icon">★</span>
+        <span>LocalRate</span>
       </a>
-
-      <!-- Навигация (Desktop) -->
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink-muted">
-        <a href="#guarantees" class="hover:text-ink transition-colors">Гарантии</a>
-        <a href="#pricing" class="hover:text-ink transition-colors">Тарифы</a>
-        <a href="#bonus" class="hover:text-ink transition-colors">Бонус от 15 шт.</a>
-        <a href="#process" class="hover:text-ink transition-colors">Как работаем</a>
-        <a href="#faq" class="hover:text-ink transition-colors">Вопросы</a>
+      <nav class="nav-links">
+        <a href="#calculator">Калькулятор</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#examples">Примеры отзывов</a>
+        <a href="#referral">Рефералка</a>
       </nav>
-
-      <!-- Кнопка связи -->
-      <div class="flex items-center gap-3">
-        <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%9F%D0%B8%D1%88%D1%83%20%D1%81%20%D1%81%D0%B0%D0%B9%D1%82%D0%B0%20LocalRate.%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%BF%D0%BE%D0%B2%D1%8B%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D1%80%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3%D0%B0."
-           target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          </svg>
-          <span>Написать в WhatsApp</span>
-        </a>
+      <div class="nav-actions">
+        <div id="userPill" class="user-pill" onclick="document.getElementById('referral').scrollIntoView()">
+          <span id="userGreeting">Бонус 200 ₽</span>
+          <button type="button" onclick="event.stopPropagation(); logoutUser()">Выйти</button>
+        </div>
+        <button id="authOpenBtn" class="btn btn-outline" onclick="openAuthModal('register')">
+          Вход <span class="hide-mobile">/ Бонус 200 ₽</span>
+        </button>
+        <a id="headerTgLink" href="https://t.me/ZlendYt" target="_blank" class="btn btn-tg">TG</a>
+        <a href="https://wa.me/79895513631" target="_blank" class="btn btn-primary">WA</a>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- =========================================================
-         2. ПЕРВЫЙ ЭКРАН (HERO — АСИММЕТРИЧНЫЙ СПЛИТ)
-    ========================================================== -->
-    <section class="pt-10 pb-16 sm:pt-16 sm:pb-24 border-b border-hairline bg-surface-alt/50">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          
-          <!-- Левая колонка (7/12): УТП и CTA -->
-          <div class="lg:col-span-7">
-            <div class="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md bg-brand-soft border border-brand-border text-brand text-xs font-mono font-medium mb-6">
-              <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span>
-              <span>Без предоплаты &bull; Чек самозанятого &bull; Гарантия от списания</span>
-            </div>
+  <main class="container">
+    <section class="hero">
+      <div class="badge">Без предоплаты • Чек самозанятого</div>
+      <h1>Поднимаем рейтинг на Яндекс.Картах, 2ГИС, Авито и Google</h1>
+      <p>Живые отзывы от реальных местных жителей с прогретых аккаунтов. Плавная публикация без риска списаний и блокировок карточки.</p>
+      <div class="hero-btns">
+        <a href="#pricing" class="btn btn-primary">Выбрать пакет отзывов</a>
+        <button id="heroBonusBtn" class="btn btn-outline" onclick="openAuthModal('register')">
+          Регистрация и бонус 200 ₽
+        </button>
+      </div>
 
-            <h1 class="text-3xl sm:text-4xl lg:text-[44px] font-semibold tracking-tight text-ink leading-[1.12] mb-5">
-              Поднимаем рейтинг бизнеса на Яндекс.Картах, 2ГИС, Google и Авито до 4.8–4.9
-            </h1>
-
-            <p class="text-base sm:text-lg text-ink-muted leading-relaxed max-w-2xl mb-8">
-              Публикуем живые отзывы с прогретых местных аккаунтов плавно, по 1–2 в день. Вы платите только после того, как отзыв прошел модерацию и появился в вашей карточке.
-            </p>
-
-            <!-- Кнопки действия -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-8">
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%202%20%D1%82%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D1%8B%D1%85%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%B0%20(1%20000%20%E2%82%BD)%20%D1%81%20%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%BE%D0%B9%20%D0%BF%D0%BE%20%D1%84%D0%B0%D0%BA%D1%82%D1%83%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D0%B8."
-                 target="_blank" rel="noopener noreferrer"
-                 class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-brand hover:bg-brand-hover text-white text-sm sm:text-base font-medium transition-colors">
-                <span>Заказать 2 тестовых отзыва (1 000 ₽)</span>
-                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
-
-              <a href="#pricing"
-                 class="inline-flex items-center justify-center h-12 px-6 rounded-md bg-white hover:bg-surface-sunken border border-hairline-strong text-ink text-sm sm:text-base font-medium transition-colors">
-                Смотреть тарифы
-              </a>
-            </div>
-
-            <!-- Микро-метрики под кнопками -->
-            <div class="grid grid-cols-3 gap-4 pt-6 border-t border-hairline max-w-lg">
-              <div>
-                <div class="font-mono text-lg sm:text-xl font-semibold text-ink tnum">0 ₽</div>
-                <div class="text-xs text-ink-subtle mt-0.5">Предоплата на старте</div>
-              </div>
-              <div>
-                <div class="font-mono text-lg sm:text-xl font-semibold text-ink tnum">1–2 / день</div>
-                <div class="text-xs text-ink-subtle mt-0.5">Безопасная скорость</div>
-              </div>
-              <div>
-                <div class="font-mono text-lg sm:text-xl font-semibold text-ink tnum">100%</div>
-                <div class="text-xs text-ink-subtle mt-0.5">Гарантия замены</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Правая колонка (5/12): Интерактивный виджет карточки «До / После» -->
-          <div class="lg:col-span-5">
-            <div class="bg-white border border-hairline-strong rounded-lg p-5 sm:p-6">
-              <!-- Верхняя панель переключателя -->
-              <div class="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-hairline">
-                <div>
-                  <div class="text-[11px] font-mono uppercase tracking-wider text-ink-subtle">Пример карточки на карте</div>
-                  <div class="text-sm font-semibold text-ink mt-0.5">Автотехцентр / Локальный сервис</div>
-                </div>
-                <div class="inline-flex rounded-md bg-surface-sunken p-1 border border-hairline" role="group" aria-label="Сравнение До и После">
-                  <button type="button" id="btn-before" onclick="togglePreview('before')"
-                          class="px-3 py-1 rounded text-xs font-medium transition-colors text-ink-muted hover:text-ink">
-                    Было
-                  </button>
-                  <button type="button" id="btn-after" onclick="togglePreview('after')"
-                          class="px-3 py-1 rounded text-xs font-medium transition-colors bg-brand text-white">
-                    Стало
-                  </button>
-                </div>
-              </div>
-
-              <!-- Блок рейтинга и показателей -->
-              <div class="flex items-baseline justify-between mb-5">
-                <div class="flex items-baseline gap-2.5">
-                  <span id="preview-rating" class="font-mono text-4xl font-semibold text-ink tnum">4.9</span>
-                  <div class="flex flex-col">
-                    <div id="preview-stars" class="flex items-center gap-0.5 text-amber-500">
-                      <!-- SVG звезды -->
-                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
-                    <span id="preview-reviews" class="text-xs font-mono text-ink-muted mt-0.5 tnum">44 отзыва &bull; Топ-3 района</span>
-                  </div>
-                </div>
-
-                <span id="preview-badge" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium bg-brand-soft text-brand-accent border border-brand-border">
-                  +68% звонков
-                </span>
-              </div>
-
-              <!-- Чек-лист состояния карточки -->
-              <div id="preview-details" class="space-y-2.5 text-xs sm:text-sm border-t border-hairline pt-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-ink-muted">Позиция в поиске по району</span>
-                  <span class="font-mono font-medium text-brand-accent">1–3 место (без рекламы)</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-ink-muted">Витрина услуг и SEO-описание</span>
-                  <span class="font-mono font-medium text-ink">Заполнены (бонус)</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-ink-muted">Сбор оценок от живых клиентов</span>
-                  <span class="font-mono font-medium text-ink">QR-табличка на стойке</span>
-                </div>
-              </div>
-
-              <!-- Мини-визуализация последнего отзыва -->
-              <div id="preview-quote" class="mt-4 p-3.5 rounded-md bg-surface-alt border border-hairline text-xs text-ink-muted leading-relaxed">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-ink">Алексей К. &bull; Местный аккаунт</span>
-                  <span class="font-mono text-[11px] text-brand-accent">Опубликовано</span>
-                </div>
-                «Заезжал на диагностику и замену масла. Мастер сразу показал причину по ходовой без навязывания лишних работ, по цене сошлось копейка в копейку.»
-              </div>
-            </div>
-          </div>
-
+      <div class="stats-strip">
+        <div class="stat-item">
+          <strong>0 ₽ аванса</strong>
+          <span>Оплата после публикации</span>
+        </div>
+        <div class="stat-item">
+          <strong>4.8 – 4.9 ★</strong>
+          <span>Целевой рейтинг</span>
+        </div>
+        <div class="stat-item">
+          <strong>1–2 в день</strong>
+          <span>Плавная подача</span>
+        </div>
+        <div class="stat-item">
+          <strong>Чек РФ</strong>
+          <span>Через «Мой налог»</span>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         3. ПОЧЕМУ НАМ ДОВЕРЯЮТ (4 СТРОГИХ ФАКТА)
-    ========================================================== -->
-    <section id="guarantees" class="py-16 sm:py-24 border-b border-hairline">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-2xl mb-12">
-          <div class="text-xs font-mono uppercase tracking-widest text-ink-subtle mb-2">Принципы работы</div>
-          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            Прозрачные условия без рисков для вашей карточки
-          </h2>
+    <!-- Referral arrival notification -->
+    <div id="refArrivalBanner" class="ref-arrival-banner">
+      <span id="refArrivalText">Вы перешли по приглашению партнёра — доступна скидка 200 ₽ при заказе от 15 отзывов!</span>
+      <a href="#pricing" class="btn btn-primary" style="padding:8px 14px; font-size:13px;">Выбрать пакет от 15 шт.</a>
+    </div>
+
+    <div id="bonusBanner" class="bonus-banner">
+      <div>
+        <h3 id="bonusBannerTitle">Бонус 200 ₽ на первый заказ после регистрации</h3>
+        <p id="bonusBannerDesc">Зарегистрируйтесь за 15 секунд — скидка 200 ₽ автоматически применится ко всем пакетам.</p>
+      </div>
+      <button id="bonusBannerBtn" class="btn btn-primary" onclick="openAuthModal('register')">
+        Получить 200 ₽
+      </button>
+    </div>
+
+    <!-- Rating Growth Calculator -->
+    <section id="calculator" class="calc-section">
+      <div class="calc-header">
+        <h2>Калькулятор роста рейтинга</h2>
+        <p>Узнайте точное количество отзывов на 5★, чтобы поднять карточку до нужной оценки</p>
+      </div>
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <label for="curRating">
+              <span>Ваш текущий рейтинг</span>
+              <span style="color:var(--muted); font-weight:500;">от 1.0 до 4.8</span>
+            </label>
+            <input type="number" id="curRating" step="0.1" min="1.0" max="4.85" value="4.1" oninput="calculateRating()">
+          </div>
+          <div class="calc-field">
+            <label for="curCount">
+              <span>Сколько сейчас оценок в карточке</span>
+              <span style="color:var(--muted); font-weight:500;">шт.</span>
+            </label>
+            <input type="number" id="curCount" min="1" max="5000" value="25" oninput="calculateRating()">
+          </div>
+          <div class="calc-field">
+            <label><span>Желаемый рейтинг</span></label>
+            <div class="target-pills">
+              <button type="button" class="target-pill" data-target="4.7" onclick="setTargetRating(4.7, this)">4.7 ★</button>
+              <button type="button" class="target-pill active" data-target="4.8" onclick="setTargetRating(4.8, this)">4.8 ★</button>
+              <button type="button" class="target-pill" data-target="4.9" onclick="setTargetRating(4.9, this)">4.9 ★</button>
+            </div>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Факт 01 -->
-          <div class="p-6 sm:p-7 rounded-lg border border-hairline bg-white hover:border-hairline-strong transition-colors">
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-mono text-xs font-semibold text-brand px-2.5 py-1 rounded bg-brand-soft border border-brand-border">01 / ОПЛАТА ПО ФАКТУ</span>
-              <svg class="w-5 h-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                <polyline points="9 12 11 14 15 10"/>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-ink mb-2">Никакой предоплаты на старте</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Сначала отзыв публикуется, проходит проверку алгоритмов площадки и закрепляется в вашей карточке. Только после этого мы присылаем скриншот результата и реквизиты для оплаты.
-            </p>
+        <div class="calc-result-box">
+          <div class="calc-res-top">
+            <span id="calcNeeded" class="calc-needed-num">+32</span>
+            <span id="calcNeededText" class="calc-needed-label">отзыва на 5★ нужно до рейтинга 4.8</span>
+          </div>
+          <p id="calcTimeline" style="font-size:13px; color:var(--muted);">Ориентировочный срок плавной публикации: ~16–20 дней</p>
+
+          <div class="calc-rec-plan">
+            <span style="font-size:11px; text-transform:uppercase; color:var(--muted); font-weight:700;">Рекомендуемый пакет</span>
+            <strong id="calcPlanTitle">Пакет «Максимум»: 30 отзывов + Упаковка и QR-код</strong>
+            <span id="calcPlanPrice" style="color:var(--accent); font-weight:800;">10 000 ₽</span>
+            <span style="color:var(--muted); font-size:12px;"> (оплата по факту)</span>
           </div>
 
-          <!-- Факт 02 -->
-          <div class="p-6 sm:p-7 rounded-lg border border-hairline bg-white hover:border-hairline-strong transition-colors">
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-mono text-xs font-semibold text-brand px-2.5 py-1 rounded bg-brand-soft border border-brand-border">02 / БЕЗОПАСНАЯ ПОДАЧА</span>
-              <svg class="w-5 h-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-ink mb-2">Живые профили и поведенческий фактор</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Используем реальные местные аккаунты с историей активности, публикуем плавно по 1–2 отзыва в день. На Авито соблюдаем полный цикл: поиск объявления &rarr; диалог в чате &rarr; пауза &rarr; отзыв.
-            </p>
-          </div>
-
-          <!-- Факт 03 -->
-          <div class="p-6 sm:p-7 rounded-lg border border-hairline bg-white hover:border-hairline-strong transition-colors">
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-mono text-xs font-semibold text-brand px-2.5 py-1 rounded bg-brand-soft border border-brand-border">03 / ГАРАНТИЯ ОТ СПИСАНИЯ</span>
-              <svg class="w-5 h-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"/>
-                <polyline points="1 20 1 14 7 14"/>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-ink mb-2">Бесплатное восстановление при проверках</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Алгоритмы карт периодически чистят отзывы у всех компаний. Если наш опубликованный отзыв со временем попадёт под фильтр модерации — бесплатно перепишем и восстановим его с другого профиля.
-            </p>
-          </div>
-
-          <!-- Факт 04 -->
-          <div class="p-6 sm:p-7 rounded-lg border border-hairline bg-white hover:border-hairline-strong transition-colors">
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-mono text-xs font-semibold text-brand px-2.5 py-1 rounded bg-brand-soft border border-brand-border">04 / ОФИЦИАЛЬНЫЙ ЧЕК</span>
-              <svg class="w-5 h-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-ink mb-2">Легальная работа с закрывающими чеками</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Работаем официально как самозанятый. После каждой оплаты формируем и отправляем официальный чек ФНС с формулировкой «Маркетинговые услуги» для вашей бухгалтерии и отчётности.
-            </p>
+          <div class="calc-btns">
+            <button type="button" class="btn btn-primary" onclick="orderFromCalc('wa')">Заказать в WhatsApp</button>
+            <button type="button" class="btn btn-tg" onclick="orderFromCalc('tg')">Написать в Telegram</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         4. ТАРИФЫ И ПАКЕТЫ (ИНТЕРАКТИВНЫЕ ВКЛАДКИ ПО ПЛОЩАДКАМ)
-    ========================================================== -->
-    <section id="pricing" class="py-16 sm:py-24 bg-surface-alt border-b border-hairline">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div>
-            <div class="text-xs font-mono uppercase tracking-widest text-ink-subtle mb-2">Прозрачный прайс-лист</div>
-            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-              Тарифы и пакеты по площадкам
-            </h2>
+    <section id="pricing">
+      <div class="section-title">
+        <h2>Каталог пакетов и услуг</h2>
+        <p>Зарегистрируйтесь или перейдите по реферальной ссылке (от 15 отзывов), чтобы получить скидку 200 ₽</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- 1. Тест -->
+        <div class="price-card" data-base-price="1000" data-reviews="2" data-plan="Тест: 2 отзыва на Яндекс.Картах">
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/test.jpg" alt="Тест 2 отзыва" onerror="handleImgFallback(this, 'test.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">ТЕСТ<br>2 ОТЗЫВА</div>
+                <div class="fb-sub">НА ЯНДЕКС.КАРТАХ</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">1 000 ₽</span>
+                <span class="fb-note-pill">БЕЗ ПРЕДОПЛАТЫ</span>
+              </div>
+            </div>
           </div>
-
-          <!-- Переключатель вкладок (Tabs) -->
-          <div class="inline-flex flex-wrap gap-1.5 p-1.5 rounded-lg bg-white border border-hairline-strong" role="tablist" aria-label="Выбор площадки">
-            <button type="button" role="tab" aria-selected="true" data-tab="yandex" onclick="switchTab('yandex')"
-                    class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-brand text-white">
-              Яндекс.Карты
-            </button>
-            <button type="button" role="tab" aria-selected="false" data-tab="2gis" onclick="switchTab('2gis')"
-                    class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors text-ink-muted hover:text-ink">
-              2ГИС
-            </button>
-            <button type="button" role="tab" aria-selected="false" data-tab="google" onclick="switchTab('google')"
-                    class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors text-ink-muted hover:text-ink">
-              Google Карты
-            </button>
-            <button type="button" role="tab" aria-selected="false" data-tab="avito" onclick="switchTab('avito')"
-                    class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors text-ink-muted hover:text-ink">
-              Авито
-            </button>
-          </div>
-        </div>
-
-        <!-- ВКЛАДКА 1: ЯНДЕКС.КАРТЫ (6 ТАРИФОВ) -->
-        <div id="tab-yandex" class="tab-panel">
-          <div class="mb-6 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink-muted bg-white px-4 py-3 rounded-md border border-hairline">
-            <span>Площадка: <strong class="text-ink">Яндекс.Карты</strong> &bull; Живые местные профили с историей активности, плавная публикация 1–2 отзыва в день.</span>
-            <span class="font-mono text-brand-accent font-medium">Оплата после модерации</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Разовый -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Разовый</span>
-                  <span class="font-mono text-xs text-ink-subtle">1 отзыв</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">500 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-5">500 ₽ за 1 отзыв</div>
-                <ul class="space-y-2.5 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Оплата строго после появления на карте</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Текст под ваши услуги и регион</span>
-                  </li>
-                </ul>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Тест</div>
+              <div class="plan-count">2 отзыва на Яндекс.Картах</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">1 000 ₽</span>
+                <span class="current-price">1 000 ₽</span>
+                <div class="per-item">Проверка качества без рисков</div>
               </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB%D0%A0%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9%20(1%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%20%E2%80%94%20500%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <ul class="plan-list">
+                <li>2 живых отзыва с местных аккаунтов</li>
+                <li>Оплата строго после публикации</li>
+                <li>Гарантия от списания</li>
+              </ul>
             </div>
-
-            <!-- Тест -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Тест</span>
-                  <span class="font-mono text-xs text-ink-subtle">2 отзыва</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">1 000 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-5">500 ₽ за 1 отзыв</div>
-                <ul class="space-y-2.5 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Идеально для проверки качества и модерации</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Оплата по факту публикации</span>
-                  </li>
-                </ul>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB%D0%A2%D0%B5%D1%81%D1%82%20(2%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%B0%20%E2%80%94%201%20000%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Старт -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Старт»</span>
-                  <span class="font-mono text-xs text-ink-subtle">10 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">4 000 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">400 ₽/шт. (экономия 1 000 ₽)</div>
-                <ul class="space-y-2.5 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Плавный выход за 5–7 дней</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Гарантия бесплатного восстановления</span>
-                  </li>
-                </ul>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%A1%D1%82%D0%B0%D1%80%D1%82%20(10%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%204%20000%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Оптимальный (ВЫДЕЛЕН КАК РЕКОМЕНДУЕМЫЙ) -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border-2 border-brand relative">
-              <div class="absolute -top-3 left-6 px-2.5 py-0.5 rounded bg-brand text-white font-mono text-[11px] font-medium uppercase tracking-wider">
-                Рекомендуемый выбор
-              </div>
-              <div>
-                <div class="flex items-center justify-between mb-3 mt-1">
-                  <span class="text-base font-semibold text-ink">Пакет «Оптимальный»</span>
-                  <span class="font-mono text-xs font-semibold text-brand">15 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">6 000 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-4">400 ₽/шт. + бонус на 4 000 ₽</div>
-
-                <div class="p-3 rounded-md bg-brand-soft border border-brand-border text-xs text-brand leading-relaxed mb-4">
-                  <strong>БЕСПЛАТНЫЙ БОНУС:</strong> полная базовая упаковка карточки на Яндекс.Картах (SEO-описание, витрина услуг, фото) + макет QR-кода для стойки.
-                </div>
-
-                <ul class="space-y-2 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Уверенный подъём рейтинга до 4.8–4.9</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Оплата частями по мере выхода отзывов</span>
-                  </li>
-                </ul>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9E%D0%BF%D1%82%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9%20(15%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%206%20000%20%E2%82%BD%20%2B%20%D0%B1%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D0%B0%D1%8F%20%D1%83%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0%20%D0%BA%D0%B0%D1%80%D1%82%D0%BE%D1%87%D0%BA%D0%B8%20%D0%B8%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-                Выбрать тариф с бонусом
-              </a>
-            </div>
-
-            <!-- Максимум -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Максимум»</span>
-                  <span class="font-mono text-xs text-ink-subtle">30 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">9 500 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">316 ₽/шт. (выгода 5 500 ₽)</div>
-                <ul class="space-y-2.5 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span><strong>Бонус включён:</strong> упаковка карточки и QR-код бесплатно</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Перекрытие старого негатива и выход в топ выдачи</span>
-                  </li>
-                </ul>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D1%83%D0%BC%20(30%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%209%20500%20%E2%82%BD%20%2B%20%D1%83%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0%20%D0%B8%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Масштаб (50 отзывов по 300 ₽) -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Масштаб»</span>
-                  <span class="font-mono text-xs text-ink-subtle">50 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">15 000 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">300 ₽/шт. (лучшая цена за отзыв)</div>
-                <ul class="space-y-2.5 text-sm text-ink-muted mb-6">
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span><strong>Бонус включён:</strong> упаковка карточки и QR-код бесплатно</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg class="w-4 h-4 text-brand-accent shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    <span>Для сетей, филиалов и конкурентных ниш</span>
-                  </li>
-                </ul>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9C%D0%B0%D1%81%D1%88%D1%82%D0%B0%D0%B1%20(50%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%2015%20000%20%E2%82%BD%20%2B%20%D1%83%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%B0%20%D0%B8%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
             </div>
           </div>
         </div>
 
-        <!-- ВКЛАДКА 2: 2ГИС -->
-        <div id="tab-2gis" class="tab-panel hidden">
-          <div class="mb-6 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink-muted bg-white px-4 py-3 rounded-md border border-hairline">
-            <span>Площадка: <strong class="text-ink">2ГИС</strong> &bull; Реальные профили пользователей, быстрое прохождение модерации и рост в локальном поиске.</span>
-            <span class="font-mono text-brand-accent font-medium">От 170 ₽ за отзыв</span>
+        <!-- 2. Старт -->
+        <div class="price-card" data-base-price="4000" data-reviews="10" data-plan="Пакет «Старт»: 10 отзывов (Яндекс.Карты)">
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/start.jpg" alt="Старт 10 отзывов" onerror="handleImgFallback(this, 'start.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">СТАРТ<br>10 ОТЗЫВОВ</div>
+                <div class="fb-sub">НА ЯНДЕКС.КАРТАХ</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">4 000 ₽</span>
+                <span class="fb-note-pill">ПЛАВНАЯ ПОДАЧА</span>
+              </div>
+            </div>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Разовый 2ГИС -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Разовый</span>
-                  <span class="font-mono text-xs text-ink-subtle">1 отзыв</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">200 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-5">200 ₽ за 1 отзыв</div>
-                <p class="text-sm text-ink-muted mb-6">Тестовая публикация для проверки качества текста и прохождения модерации 2ГИС.</p>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Старт</div>
+              <div class="plan-count">10 отзывов (Яндекс.Карты)</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">4 000 ₽</span>
+                <span class="current-price">4 000 ₽</span>
+                <div class="per-item">400 ₽ за отзыв</div>
               </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB%D0%A0%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9%20(1%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%20%E2%80%94%20200%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%202%D0%93%D0%98%D0%A1."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <ul class="plan-list">
+                <li>Плавная подача по 1–2 в день</li>
+                <li>Согласование текстов перед публикацией</li>
+                <li>Поэтапная оплата по факту выхода</li>
+              </ul>
             </div>
-
-            <!-- Старт 2ГИС -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Старт»</span>
-                  <span class="font-mono text-xs text-ink-subtle">10 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">1 900 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">190 ₽/шт.</div>
-                <p class="text-sm text-ink-muted mb-6">Плавный набор свежих оценок для укрепления позиций карточки в 2ГИС.</p>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%A1%D1%82%D0%B0%D1%80%D1%82%20(10%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%201%20900%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%202%D0%93%D0%98%D0%A1."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Оптимальный 2ГИС -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border-2 border-brand relative">
-              <div class="absolute -top-3 left-6 px-2.5 py-0.5 rounded bg-brand text-white font-mono text-[11px] font-medium uppercase">
-                Популярный
-              </div>
-              <div>
-                <div class="flex items-center justify-between mb-3 mt-1">
-                  <span class="text-sm font-semibold text-ink">Пакет «Оптимальный»</span>
-                  <span class="font-mono text-xs font-semibold text-brand">15 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">2 700 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">180 ₽/шт.</div>
-                <div class="p-3 rounded-md bg-brand-soft border border-brand-border text-xs text-brand mb-5">
-                  <strong>Бонус:</strong> макет QR-кода для сбора отзывов в 2ГИС в подарок.
-                </div>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9E%D0%BF%D1%82%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9%20(15%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%202%20700%20%E2%82%BD%20%2B%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%202%D0%93%D0%98%D0%A1."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Максимум 2ГИС -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Максимум»</span>
-                  <span class="font-mono text-xs text-ink-subtle">30 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">5 100 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">170 ₽/шт.</div>
-                <div class="p-3 rounded-md bg-surface-alt border border-hairline text-xs text-ink-muted mb-5">
-                  <strong>Бонус:</strong> макет QR-кода в подарок + приоритетное размещение.
-                </div>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D1%83%D0%BC%20(30%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%205%20100%20%E2%82%BD%20%2B%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%202%D0%93%D0%98%D0%A1."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
             </div>
           </div>
         </div>
 
-        <!-- ВКЛАДКА 3: GOOGLE КАРТЫ -->
-        <div id="tab-google" class="tab-panel hidden">
-          <div class="mb-6 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink-muted bg-white px-4 py-3 rounded-md border border-hairline">
-            <span>Площадка: <strong class="text-ink">Google Карты</strong> &bull; В наличии зарубежные и местные профили с историей активности для стабильного прохождения модерации.</span>
-            <span class="font-mono text-brand-accent font-medium">Зарубежные и местные профили</span>
+        <!-- 3. Оптимальный -->
+        <div class="price-card popular" data-base-price="6000" data-reviews="15" data-plan="Пакет «Оптимальный»: 15 отзывов + Упаковка и QR-код">
+          <div class="popular-tag">Хит продаж</div>
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/optimal.jpg" alt="Оптимальный 15 отзывов" onerror="handleImgFallback(this, 'optimal.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">ОПТИМАЛЬНЫЙ<br>15 ОТЗЫВОВ</div>
+                <div class="fb-sub">+ УПАКОВКА И QR-КОД В ПОДАРОК</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">6 000 ₽</span>
+                <span class="fb-note-pill">ХИТ ПРОДАЖ</span>
+              </div>
+            </div>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Разовый Google -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Разовый</span>
-                  <span class="font-mono text-xs text-ink-subtle">1 отзыв</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">400 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-5">400 ₽ за 1 отзыв</div>
-                <p class="text-sm text-ink-muted mb-6">Публикация с прогретого Google-аккаунта с оплатой строго по факту.</p>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Оптимальный</div>
+              <div class="plan-count">15 отзывов + Упаковка в подарок</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">6 000 ₽</span>
+                <span class="current-price">6 000 ₽</span>
+                <div class="per-item">400 ₽ за отзыв + подарки</div>
               </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB%D0%A0%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9%20(1%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%20%E2%80%94%20400%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20Google%20%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <ul class="plan-list">
+                <li>15 живых отзывов с прогретых аккаунтов</li>
+                <li><strong>Подарок:</strong> SEO-упаковка карточки</li>
+                <li><strong>Подарок:</strong> макет таблички с QR-кодом</li>
+              </ul>
             </div>
-
-            <!-- Старт Google -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Старт»</span>
-                  <span class="font-mono text-xs text-ink-subtle">10 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">3 800 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">380 ₽/шт.</div>
-                <p class="text-sm text-ink-muted mb-6">Плавный прирост оценок для повышения доверия и видимости в Google поиске.</p>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%A1%D1%82%D0%B0%D1%80%D1%82%20(10%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%203%20800%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20Google%20%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Оптимальный Google -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border-2 border-brand relative">
-              <div class="absolute -top-3 left-6 px-2.5 py-0.5 rounded bg-brand text-white font-mono text-[11px] font-medium uppercase">
-                Популярный
-              </div>
-              <div>
-                <div class="flex items-center justify-between mb-3 mt-1">
-                  <span class="text-sm font-semibold text-ink">Пакет «Оптимальный»</span>
-                  <span class="font-mono text-xs font-semibold text-brand">15 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">5 400 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">360 ₽/шт.</div>
-                <div class="p-3 rounded-md bg-brand-soft border border-brand-border text-xs text-brand mb-5">
-                  <strong>Бонус:</strong> макет QR-кода для сбора отзывов в Google Картах в подарок.
-                </div>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9E%D0%BF%D1%82%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9%20(15%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%205%20400%20%E2%82%BD%20%2B%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%20Google%20%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
-            </div>
-
-            <!-- Максимум Google -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Максимум»</span>
-                  <span class="font-mono text-xs text-ink-subtle">30 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">10 200 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-4">340 ₽/шт.</div>
-                <div class="p-3 rounded-md bg-surface-alt border border-hairline text-xs text-ink-muted mb-5">
-                  <strong>Бонус:</strong> макет QR-кода в подарок + гарантия восстановления.
-                </div>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D1%83%D0%BC%20(30%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%2010%20200%20%E2%82%BD%20%2B%20QR-%D0%BA%D0%BE%D0%B4)%C2%BB%20%D0%B4%D0%BB%D1%8F%20Google%20%D0%9A%D0%B0%D1%80%D1%82."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+            <div class="card-actions">
+              <button class="btn btn-primary" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
             </div>
           </div>
         </div>
 
-        <!-- ВКЛАДКА 4: АВИТО -->
-        <div id="tab-avito" class="tab-panel hidden">
-          <div class="mb-6 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink-muted bg-white px-4 py-3 rounded-md border border-hairline">
-            <span>Площадка: <strong class="text-ink">Авито</strong> &bull; Строгое соблюдение поведенческого фактора: поиск объявления &rarr; переписка в чате &rarr; пауза &rarr; публикация отзыва.</span>
-            <span class="font-mono text-brand-accent font-medium">Защита от отклонения модерацией</span>
+        <!-- 4. Максимум -->
+        <div class="price-card" data-base-price="10000" data-reviews="30" data-plan="Пакет «Максимум»: 30 отзывов + Упаковка и QR-код">
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/max.jpg" alt="Максимум 30 отзывов" onerror="handleImgFallback(this, 'max.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">МАКСИМУМ<br>30 ОТЗЫВОВ</div>
+                <div class="fb-sub">+ УПАКОВКА И QR-КОД</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">10 000 ₽</span>
+                <span class="fb-note-pill">333 ₽ / ОТЗЫВ</span>
+              </div>
+            </div>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Разовый Авито -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Разовый</span>
-                  <span class="font-mono text-xs text-ink-subtle">1 отзыв</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">750 ₽</div>
-                <div class="text-xs font-mono text-ink-subtle mb-5">750 ₽ за 1 отзыв</div>
-                <p class="text-sm text-ink-muted mb-6">Полный цикл поведенческого фактора с реального прогретого профиля Авито.</p>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Максимум</div>
+              <div class="plan-count">30 отзывов + Упаковка и QR-код</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">10 000 ₽</span>
+                <span class="current-price">10 000 ₽</span>
+                <div class="per-item">333 ₽ за отзыв • Защита рейтинга 4.9</div>
               </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB%D0%A0%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9%20(1%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%20%E2%80%94%20750%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%90%D0%B2%D0%B8%D1%82%D0%BE."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <ul class="plan-list">
+                <li>30 отзывов с естественным графиком</li>
+                <li>Упаковка карточки и витрины услуг</li>
+                <li>Макет QR-кода и чек самозанятого</li>
+              </ul>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Профи -->
+        <div class="price-card" data-base-price="15000" data-reviews="50" data-plan="Пакет «Профи»: 50 отзывов + Упаковка">
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/profi.jpg" alt="50 отзывов" onerror="handleImgFallback(this, 'profi.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">50<br>ОТЗЫВОВ</div>
+                <div class="fb-sub">НА ЯНДЕКС.КАРТАХ</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">15 000 ₽</span>
+                <span class="fb-note-pill">300 ₽ / ОТЗЫВ</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Профи</div>
+              <div class="plan-count">50 отзывов + Полная упаковка</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">15 000 ₽</span>
+                <span class="current-price">15 000 ₽</span>
+                <div class="per-item">300 ₽ за отзыв • Максимальная выгода</div>
+              </div>
+              <ul class="plan-list">
+                <li>Закрепление в топе выдачи района</li>
+                <li>Полная упаковка профиля и QR-код</li>
+                <li>Поэтапная оплата по факту выхода</li>
+              </ul>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Другие площадки -->
+        <div class="price-card" data-base-price="0" data-reviews="0" data-plan="Авито / 2ГИС / Google Карты">
+          <div class="card-media">
+            <div class="slider-track">
+              <div class="slide"><img src="img/other.jpg" alt="Другие площадки" onerror="handleImgFallback(this, 'other.jpg')"></div>
+            </div>
+            <div class="card-media-fallback">
+              <div>
+                <div class="fb-brand">LocalRate</div>
+                <div class="fb-title">АВИТО • 2ГИС<br>GOOGLE КАРТЫ</div>
+                <div class="fb-sub">ОТЗЫВЫ ПОД КЛЮЧ</div>
+              </div>
+              <div class="fb-stars">
+                <div class="fb-stars-row">★★★★★</div>
+                <div class="fb-rating">4.9 ★</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">ОТ 200 ₽</span>
+                <span class="fb-note-pill">ПО ФАКТУ ВЫХОДА</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Другие площадки</div>
+              <div class="plan-count">Авито • 2ГИС • Google Карты</div>
+              <div class="plan-price-wrap">
+                <span class="current-price">от 200 ₽</span>
+                <div class="per-item">Индивидуальный расчёт под задачу</div>
+              </div>
+              <ul class="plan-list">
+                <li>2ГИС — от 200 ₽/шт.</li>
+                <li>Google Карты — от 400 ₽/шт.</li>
+                <li>Авито (с прогревом чата) — 750 ₽/шт.</li>
+              </ul>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. ТОВАРА СО СЛАЙДЕРОМ (Дизайн-макет QR со сменными фото) -->
+        <div class="price-card" data-base-price="1000" data-reviews="0" data-plan="Дизайн-макет настольной таблички / наклейки с QR-кодом">
+          <div class="card-media" data-index="0">
+            <div class="slider-track">
+              <div class="slide"><img src="img/qr1.jpg" alt="Макет таблички QR" onerror="this.src='img/qr.jpg';"></div>
+              <div class="slide"><img src="img/qr2.jpg" alt="Наклейки с QR" onerror="this.src='img/qr.jpg';"></div>
+              <div class="slide"><img src="img/qr3.jpg" alt="Пример для салона" onerror="this.src='img/qr.jpg';"></div>
+            </div>
+            <button class="slider-arrow prev" onclick="moveSlide(event, this, -1)">❮</button>
+            <button class="slider-arrow next" onclick="moveSlide(event, this, 1)">❯</button>
+            <div class="slider-dots">
+              <span class="dot active" onclick="currentSlide(event, this, 0)"></span>
+              <span class="dot" onclick="currentSlide(event, this, 1)"></span>
+              <span class="dot" onclick="currentSlide(event, this, 2)"></span>
             </div>
 
-            <!-- Старт Авито -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
+            <div class="card-media-fallback">
               <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Старт»</span>
-                  <span class="font-mono text-xs text-ink-subtle">10 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">7 000 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">700 ₽/шт.</div>
-                <p class="text-sm text-ink-muted mb-6">Повышение доверия к профилю исполнителя или компании на Авито.</p>
+                <div class="fb-brand">LocalRate • Дизайн</div>
+                <div class="fb-title">ТАБЛИЧКА И<br>НАКЛЕЙКА QR</div>
+                <div class="fb-sub">МАКЕТ ДЛЯ ПЕЧАТИ В ТИПОГРАФИИ</div>
               </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%A1%D1%82%D0%B0%D1%80%D1%82%20(10%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%207%20000%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%90%D0%B2%D0%B8%D1%82%D0%BE."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <div class="fb-stars">
+                <div class="fb-stars-row" style="color:var(--text); font-size:15px; letter-spacing:0;">⊞ QR • 4.9★</div>
+                <div class="fb-rating" style="font-size:12px; color:var(--muted);">A6 • A5 • СТИКЕР</div>
+              </div>
+              <div class="fb-bottom">
+                <span class="fb-price-pill">1 000 ₽</span>
+                <span class="fb-note-pill">0 ₽ ОТ 15 ОТЗЫВОВ</span>
+              </div>
             </div>
-
-            <!-- Оптимальный Авито -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border-2 border-brand relative">
-              <div class="absolute -top-3 left-6 px-2.5 py-0.5 rounded bg-brand text-white font-mono text-[11px] font-medium uppercase">
-                Оптимальный
+          </div>
+          <div class="card-body">
+            <div>
+              <div class="plan-name">Дополнительная услуга</div>
+              <div class="plan-count">Дизайн-макет таблички / наклейки с QR-кодом</div>
+              <div class="plan-price-wrap">
+                <span class="old-price">1 000 ₽</span>
+                <span class="current-price">1 000 ₽</span>
+                <div class="per-item">Бесплатно в подарок при заказе от 15 отзывов</div>
               </div>
-              <div>
-                <div class="flex items-center justify-between mb-3 mt-1">
-                  <span class="text-sm font-semibold text-ink">Пакет «Оптимальный»</span>
-                  <span class="font-mono text-xs font-semibold text-brand">15 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">10 200 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">680 ₽/шт.</div>
-                <p class="text-sm text-ink-muted mb-6">Стабильный рост рейтинга профиля и конверсии из просмотров объявлений в звонки.</p>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9E%D0%BF%D1%82%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9%20(15%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%2010%20200%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%90%D0%B2%D0%B8%D1%82%D0%BE."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+              <ul class="plan-list">
+                <li>Индивидуальный дизайн под фирменные цвета</li>
+                <li>Прямая ссылка на форму отзыва Яндекс / 2ГИС</li>
+                <li>Файлы PDF / PNG в высоком разрешении для печати</li>
+              </ul>
             </div>
-
-            <!-- Максимум Авито -->
-            <div class="flex flex-col justify-between p-6 rounded-lg bg-white border border-hairline">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-ink">Пакет «Максимум»</span>
-                  <span class="font-mono text-xs text-ink-subtle">30 отзывов</span>
-                </div>
-                <div class="font-mono text-3xl font-semibold text-ink tnum mb-1">19 500 ₽</div>
-                <div class="text-xs font-mono text-brand-accent mb-5">650 ₽/шт.</div>
-                <p class="text-sm text-ink-muted mb-6">Максимальный запас прочности для коммерческих аккаунтов и компаний на Авито.</p>
-              </div>
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%C2%AB%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D1%83%D0%BC%20(30%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%E2%80%94%2019%20500%20%E2%82%BD)%C2%BB%20%D0%B4%D0%BB%D1%8F%20%D0%90%D0%B2%D0%B8%D1%82%D0%BE."
-                 target="_blank" rel="noopener noreferrer"
-                 class="w-full inline-flex items-center justify-center h-10 px-4 rounded-md border border-hairline-strong hover:border-ink text-ink text-sm font-medium transition-colors">
-                Выбрать тариф
-              </a>
+            <div class="card-actions">
+              <button class="btn btn-outline" onclick="orderPlan(this, 'wa')">WhatsApp</button>
+              <button class="btn btn-tg" onclick="orderPlan(this, 'tg')">Telegram</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         5. АКЦЕНТНЫЙ БЛОК ПРО БОНУС (ОТ 15 ОТЗЫВОВ НА ЯНДЕКСЕ)
-    ========================================================== -->
-    <section id="bonus" class="py-16 sm:py-24 border-b border-hairline bg-white">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="rounded-lg border border-brand-border bg-brand-soft/60 p-6 sm:p-10 lg:p-12">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            <div class="lg:col-span-7">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-white border border-brand-border text-brand font-mono text-xs font-medium mb-4">
-                БОНУС ПРИ ЗАКАЗЕ ОТ 15 ОТЗЫВОВ НА ЯНДЕКС.КАРТАХ
-              </div>
-              <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink mb-4">
-                Бесплатная базовая упаковка вашей карточки + макет QR-кода для стойки
-              </h2>
-              <p class="text-sm sm:text-base text-ink-muted leading-relaxed mb-6">
-                Одних отзывов недостаточно, если у компании не заполнены услуги и описание — алгоритмы Яндекса режут показы таких карточек. При заказе пакета от 15 отзывов мы сами приведём ваш профиль в порядок без доплат (отдельно такая настройка стоит 3 000–4 000 ₽).
-              </p>
+    <!-- Examples of Real Reviews -->
+    <section id="examples" class="examples-section">
+      <div class="section-title">
+        <h2>Примеры живых отзывов по нишам</h2>
+        <p>Пишем естественным человеческим языком с деталями услуги — без шаблонов и «воды»</p>
+      </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <div class="bg-white p-4 rounded-md border border-hairline">
-                  <div class="font-semibold text-sm text-ink mb-1">Безопасный доступ</div>
-                  <p class="text-xs text-ink-muted leading-relaxed">Пароль от аккаунта не нужен — вы добавляете нашу почту в Яндекс.Бизнесе с ролью «Представитель» за 30 секунд.</p>
-                </div>
-                <div class="bg-white p-4 rounded-md border border-hairline">
-                  <div class="font-semibold text-sm text-ink mb-1">SEO-описание под район</div>
-                  <p class="text-xs text-ink-muted leading-relaxed">Пропишем ключевые запросы ваших услуг, чтобы карточка чаще показывалась в поиске по вашему району.</p>
-                </div>
-                <div class="bg-white p-4 rounded-md border border-hairline">
-                  <div class="font-semibold text-sm text-ink mb-1">Витрина услуг и фото</div>
-                  <p class="text-xs text-ink-muted leading-relaxed">Оформим прайс-лист основных позиций и загрузим фотографии ваших работ, интерьера или фасада.</p>
-                </div>
-                <div class="bg-white p-4 rounded-md border border-hairline">
-                  <div class="font-semibold text-sm text-ink mb-1">Макет таблички с QR-кодом</div>
-                  <p class="text-xs text-ink-muted leading-relaxed">Сделаем готовый к печати макет А5 с прямой ссылкой на окно отзыва для кассовой зоны или стойки.</p>
-                </div>
-              </div>
+      <div class="niche-tabs">
+        <button type="button" class="niche-tab active" onclick="renderExamples('auto', this)">Автосервис</button>
+        <button type="button" class="niche-tab" onclick="renderExamples('beauty', this)">Салон красоты</button>
+        <button type="button" class="niche-tab" onclick="renderExamples('med', this)">Медицина</button>
+        <button type="button" class="niche-tab" onclick="renderExamples('food', this)">Кафе и рестораны</button>
+        <button type="button" class="niche-tab" onclick="renderExamples('service', this)">Ремонт и услуги</button>
+      </div>
 
-              <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%20%D0%BE%D1%82%2015%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%BE%D0%B2%20%D0%BD%D0%B0%20%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82%D0%B0%D1%85%20%D1%81%20%D0%B1%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D0%BE%D0%B9%20%D1%83%D0%BF%D0%B0%D0%BA%D0%BE%D0%B2%D0%BA%D0%BE%D0%B9%20%D0%BA%D0%B0%D1%80%D1%82%D0%BE%D1%87%D0%BA%D0%B8%20%D0%B8%20QR-%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC."
-                 target="_blank" rel="noopener noreferrer"
-                 class="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-                <span>Зафиксировать пакет с бонусом в WhatsApp</span>
-              </a>
-            </div>
+      <div id="examplesGrid" class="examples-grid"></div>
+    </section>
 
-            <!-- Визуальный макет QR-таблички справа -->
-            <div class="lg:col-span-5">
-              <div class="bg-white border border-hairline-strong rounded-lg p-6 max-w-sm mx-auto">
-                <div class="text-center border-b border-hairline pb-4 mb-4">
-                  <div class="font-mono text-[11px] uppercase tracking-widest text-ink-subtle">Макет А5 для кассы / стойки</div>
-                  <div class="text-base font-semibold text-ink mt-1">Оцените нашу работу на Яндекс.Картах</div>
-                  <p class="text-xs text-ink-muted mt-1">Наведите камеру телефона на QR-код — откроется сразу окно отзыва</p>
-                </div>
-
-                <!-- Векторный стилизованный QR-код -->
-                <div class="w-40 h-40 mx-auto p-3 rounded-lg border border-hairline bg-surface-alt flex items-center justify-center mb-4">
-                  <svg class="w-full h-full text-ink" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
-                    <path d="M10 10h25v25H10V10zm5 5v15h15V15H15zm5 5h5v5h-5v-5zm45-10h25v25H65V10zm5 5v15h15V15H70zm5 5h5v5h-5v-5zM10 65h25v25H10V65zm5 5v15h15V70H15zm5 5h5v5h-5v-5zm25-65h5v10h-5V10zm10 5h5v15h-5V15zm-15 15h10v5H40V30zm5 10h15v5H45V40zm-35 5h10v5H10V45zm15 5h10v5H25V50zm15 0h5v10h-5V50zm10 5h15v5H50V55zm20-10h10v5H70V45zm15 5h5v15h-5V50zm-35 15h10v5H50V65zm15 5h5v15h-5V70zm-20 10h15v5H45V80zm25 5h15v5H70V85z"/>
-                  </svg>
-                </div>
-
-                <div class="text-center text-xs font-mono text-brand-accent bg-brand-soft py-2 px-3 rounded border border-brand-border">
-                  Прямая ссылка: /reviews/?add-review=true
-                </div>
-              </div>
-            </div>
-
-          </div>
+    <!-- Referral Program -->
+    <section id="referral" class="ref-section">
+      <div>
+        <span class="ref-badge">Партнёрская программа LocalRate</span>
+        <h2>Рекомендуйте нас коллегам — дарим 200 ₽ на пакет от 15 отзывов</h2>
+        <p>Поделитесь персональной ссылкой с владельцами соседних бизнесов или знакомыми предпринимателями. Когда человек перейдёт по вашей ссылке и закажет пакет от 15 отзывов — сработает скидка 200 ₽.</p>
+        <ul class="ref-rules">
+          <li>Скидка <strong>200 ₽</strong> действует на пакеты <strong>«Оптимальный» (15 шт.)</strong>, <strong>«Максимум» (30 шт.)</strong> и <strong>«Профи» (50 шт.)</strong>.</li>
+          <li>Для получения своей именной ссылки пройдите быструю регистрацию на сайте.</li>
+          <li>Скидка автоматически закрепится за вашим другом при переходе по ссылке.</li>
+        </ul>
+      </div>
+      <div class="ref-box">
+        <strong style="display:block; font-size:15px; margin-bottom:4px;">Ваша реферальная ссылка</strong>
+        <span id="refStatusHint" style="font-size:12px; color:var(--muted);">Зарегистрируйтесь, чтобы ссылка стала именной</span>
+        <div class="ref-link-row">
+          <input type="text" id="refLinkInput" class="ref-link-input" readonly value="https://zlendyt.github.io/LocalRate/">
+          <button type="button" class="btn btn-primary" onclick="copyRefLink()">Копировать</button>
+        </div>
+        <div style="margin-top:10px;">
+          <button type="button" id="refRegCta" class="btn btn-outline" style="width:100%;" onclick="openAuthModal('register')">Создать именную ссылку</button>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         6. КАК ПРОХОДИТ РАБОТА (4 ПОСЛЕДОВАТЕЛЬНЫХ ШАГА)
-    ========================================================== -->
-    <section id="process" class="py-16 sm:py-24 bg-surface-alt border-b border-hairline">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-2xl mb-12">
-          <div class="text-xs font-mono uppercase tracking-widest text-ink-subtle mb-2">Этапы запуска</div>
-          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            Как строится работа от первого сообщения до результата
-          </h2>
+    <section id="how">
+      <div class="section-title">
+        <h2>Как строится работа</h2>
+        <p>Прозрачный процесс без передачи доступов к вашему аккаунту</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h4>Ссылка и задача</h4>
+          <p>Вы присылаете ссылку на карточку компании и выбираете нужный пакет отзывов.</p>
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- Шаг 1 -->
-          <div class="p-6 rounded-lg bg-white border border-hairline">
-            <div class="font-mono text-xs font-semibold text-brand mb-3">ШАГ 01</div>
-            <h3 class="text-base font-semibold text-ink mb-2">Короткий бриф по услугам</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Вы скидываете ссылку на карточку и в двух словах пишете, какие услуги или имена мастеров нужно подсветить в отзывах.
-            </p>
-          </div>
-
-          <!-- Шаг 2 -->
-          <div class="p-6 rounded-lg bg-white border border-hairline">
-            <div class="font-mono text-xs font-semibold text-brand mb-3">ШАГ 02</div>
-            <h3 class="text-base font-semibold text-ink mb-2">Плавная публикация 1–2 в день</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              Готовим уникальные естественные тексты без шаблонов и размещаем с прогретых местных аккаунтов в безопасном темпе.
-            </p>
-          </div>
-
-          <!-- Шаг 03 -->
-          <div class="p-6 rounded-lg bg-white border border-hairline">
-            <div class="font-mono text-xs font-semibold text-brand mb-3">ШАГ 03</div>
-            <h3 class="text-base font-semibold text-ink mb-2">Скриншот и оплата по СБП</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              После прохождения модерации присылаем скриншот опубликованного отзыва. Вы оплачиваете по СБП и получаете официальный чек.
-            </p>
-          </div>
-
-          <!-- Шаг 04 -->
-          <div class="p-6 rounded-lg bg-white border border-hairline">
-            <div class="font-mono text-xs font-semibold text-brand mb-3">ШАГ 04</div>
-            <h3 class="text-base font-semibold text-ink mb-2">Упаковка карточки и QR-код</h3>
-            <p class="text-sm text-ink-muted leading-relaxed">
-              При заказе от 15 отзывов оформляем витрину услуг, описание, фото в Яндекс.Бизнесе и передаём макет таблички с QR-кодом.
-            </p>
-          </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h4>Тексты и график</h4>
+          <p>Составляем живые тексты с учётом специфики бизнеса и запускаем плавную подачу по 1–2 отзыва в день.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h4>Публикация</h4>
+          <p>Реальные местные аккаунты с историей активности публикуют отзывы. Мы присылаем вам скриншот.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h4>Оплата и чек</h4>
+          <p>Вы проверяете отзыв на карте, оплачиваете по факту выхода и получаете официальный чек самозанятого.</p>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         7. ЧАСТЫЕ ВОПРОСЫ (FAQ АККОРДЕОН)
-    ========================================================== -->
-    <section id="faq" class="py-16 sm:py-24 border-b border-hairline bg-white">
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-10">
-          <div class="text-xs font-mono uppercase tracking-widest text-ink-subtle mb-2">Ответы на возражения</div>
-          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            Частые вопросы
-          </h2>
-        </div>
-
-        <div class="divide-y divide-hairline border-y border-hairline">
-          <!-- Вопрос 1 -->
-          <details class="group py-5" open>
-            <summary class="flex items-center justify-between gap-4 cursor-pointer text-base font-semibold text-ink">
-              <span>Не заблокируют ли карточку или не повесят ли «замок» на Яндекс.Картах?</span>
-              <svg class="w-5 h-5 text-ink-subtle shrink-0 transition-transform duration-150 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </summary>
-            <p class="mt-3 text-sm text-ink-muted leading-relaxed">
-              Нет. Алгоритмы Яндекса наказывают только за массовый вброс с пустых аккаунтов-однодневок по 10–20 оценок за день. Мы используем реальные профили жителей вашего региона с историей активности и публикуем плавно по 1–2 отзыва в разброс по времени — для модерации это выглядит как естественный поток клиентов.
-            </p>
-          </details>
-
-          <!-- Вопрос 2 -->
-          <details class="group py-5">
-            <summary class="flex items-center justify-between gap-4 cursor-pointer text-base font-semibold text-ink">
-              <span>Как проходит публикация отзыва на Авито, чтобы его не отклонили?</span>
-              <svg class="w-5 h-5 text-ink-subtle shrink-0 transition-transform duration-150 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </summary>
-            <p class="mt-3 text-sm text-ink-muted leading-relaxed">
-              На Авито мы строго соблюдаем поведенческий фактор: исполнитель сам находит ваше объявление через поиск, изучает его и пишет вам в чат Авито. Вам нужно будет только ответить ему пару фраз для видимости диалога (не отправляя номер телефона в чат), после чего выдерживается пауза, и публикуется отзыв с отметкой «Сделка состоялась».
-            </p>
-          </details>
-
-          <!-- Вопрос 3 -->
-          <details class="group py-5">
-            <summary class="flex items-center justify-between gap-4 cursor-pointer text-base font-semibold text-ink">
-              <span>Можно ли оплатить по безналу и получить закрывающий чек?</span>
-              <svg class="w-5 h-5 text-ink-subtle shrink-0 transition-transform duration-150 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </summary>
-            <p class="mt-3 text-sm text-ink-muted leading-relaxed">
-              Да, мы работаем официально как самозанятый (НПД). После оплаты по СБП или на расчётный счёт мы формируем в приложении «Мой налог» официальный чек с наименованием «Маркетинговые услуги» и отправляем его вам в WhatsApp или на почту.
-            </p>
-          </details>
-
-          <!-- Вопрос 4 -->
-          <details class="group py-5">
-            <summary class="flex items-center justify-between gap-4 cursor-pointer text-base font-semibold text-ink">
-              <span>Что будет, если опубликованный отзыв через пару недель спишут?</span>
-              <svg class="w-5 h-5 text-ink-subtle shrink-0 transition-transform duration-150 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </summary>
-            <p class="mt-3 text-sm text-ink-muted leading-relaxed">
-              На все опубликованные отзывы действует гарантия от списания. Если при плановой проверке площадки отзыв исчезнет из карточки, вы просто присылаете нам сообщение, и мы бесплатно переписываем и публикуем новый отзыв с другого прогретого аккаунта.
-            </p>
-          </details>
-        </div>
+    <section id="faq">
+      <div class="section-title">
+        <h2>Частые вопросы</h2>
       </div>
-    </section>
-
-    <!-- =========================================================
-         8. ФИНАЛЬНЫЙ ПРИЗЫВ К ДЕЙСТВИЮ И ПОДВАЛ (FOOTER)
-    ========================================================== -->
-    <section class="py-16 sm:py-20 bg-surface-alt">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="p-8 sm:p-10 rounded-lg bg-white border border-hairline-strong flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          <div class="max-w-xl">
-            <div class="text-xs font-mono uppercase tracking-widest text-brand-accent mb-2">Старт без рисков</div>
-            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink mb-3">
-              Проверьте качество на 2 тестовых отзывах
-            </h2>
-            <p class="text-sm sm:text-base text-ink-muted leading-relaxed">
-              Пришлите ссылку на вашу карточку в WhatsApp — оценим текущую ситуацию по конкурентам в вашем районе и запустим первые 2 отзыва с оплатой строго после публикации.
-            </p>
-          </div>
-
-          <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 shrink-0">
-            <a href="https://wa.me/79895513631?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C%202%20%D1%82%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D1%8B%D1%85%20%D0%BE%D1%82%D0%B7%D1%8B%D0%B2%D0%B0%20(1%20000%20%E2%82%BD)%20%D1%81%20%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%BE%D0%B9%20%D0%BF%D0%BE%20%D1%84%D0%B0%D0%BA%D1%82%D1%83."
-               target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-brand hover:bg-brand-hover text-white text-sm font-medium transition-colors">
-              <span>Запустить 2 тестовых отзыва</span>
-            </a>
-
-            <a href="tel:+79895513631"
-               class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-surface-alt hover:bg-surface-sunken border border-hairline-strong text-ink font-mono text-sm font-medium transition-colors tnum">
-              <span>+7 989 551-36-31</span>
-            </a>
-          </div>
-        </div>
+      <div class="faq-list">
+        <details>
+          <summary>Не заблокируют ли карточку за накрутку?</summary>
+          <p>Мы не используем ботов и массовые вбросы за один час. Публикация идёт плавно (1–2 отзыва в сутки) с реальных местных аккаунтов, которые ранее уже пользовались картами и навигатором в вашем городе.</p>
+        </details>
+        <details>
+          <summary>Что если отзыв не пройдёт модерацию или спишется?</summary>
+          <p>Вы платите только за опубликованные отзывы, которые закрепились в карточке. Если какой-то отзыв не прошёл фильтр, мы бесплатно заменяем его другим аккаунтом.</p>
+        </details>
+        <details>
+          <summary>Как работает реферальная скидка 200 ₽?</summary>
+          <p>Если клиент перешёл на сайт по реферальной ссылке партнёра, ему автоматически активируется скидка 200 ₽ при покупке любого пакета от 15 отзывов (15, 30 или 50 штук).</p>
+        </details>
       </div>
     </section>
   </main>
 
-  <footer class="py-8 bg-white border-t border-hairline">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-subtle">
-      <div class="flex items-center gap-2.5">
-        <span class="font-semibold text-ink">LocalRate</span>
-        <span>&bull;</span>
-        <span>Управление репутацией на Яндекс.Картах, 2ГИС, Google и Авито</span>
-      </div>
-      <div class="flex items-center gap-5 font-mono">
-        <a href="https://wa.me/79895513631" target="_blank" rel="noopener noreferrer" class="text-ink-muted hover:text-ink transition-colors">
-          WhatsApp: +7 989 551-36-31
-        </a>
-        <span>НПД &bull; Чек ФНС</span>
+  <footer>
+    <div class="container">
+      <p><strong>LocalRate</strong> — Управление репутацией бизнеса • Михаил • +7 (989) 551-36-31</p>
+      <div class="footer-links">
+        <a href="https://wa.me/79895513631" target="_blank" class="btn btn-primary">Написать в WhatsApp</a>
+        <a id="footerTgLink" href="https://t.me/ZlendYt" target="_blank" class="btn btn-tg">Написать в Telegram</a>
       </div>
     </div>
   </footer>
 
-  <!-- =========================================================
-       ИНТЕРАКТИВНАЯ ЛОГИКА (ВКЛАДКИ ТАРИФОВ И ВИДЖЕТ ДО/ПОСЛЕ)
-  ========================================================== -->
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal-backdrop" onclick="if(event.target===this) closeAuthModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      <div class="tabs">
+        <button id="tabRegister" class="tab-btn active" onclick="switchAuthTab('register')">Регистрация (+200 ₽)</button>
+        <button id="tabLogin" class="tab-btn" onclick="switchAuthTab('login')">Вход</button>
+      </div>
+
+      <div id="authError" class="error-msg"></div>
+
+      <!-- Register Form -->
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-note">После регистрации на ваш счёт сразу зачислится бонус <strong>200 ₽</strong> на первый заказ и откроется реферальная ссылка.</div>
+        <div class="form-group">
+          <label>Ваше имя</label>
+          <input type="text" id="regName" placeholder="Например, Алексей" required>
+        </div>
+        <div class="form-group">
+          <label>Телефон или Telegram</label>
+          <input type="text" id="regPhone" placeholder="+7 (999) 123-45-67 или @username" required>
+        </div>
+        <div class="form-group">
+          <label>Придумайте пароль</label>
+          <input type="password" id="regPass" placeholder="Минимум 4 символа" minlength="4" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:13px;">Зарегистрироваться и забрать 200 ₽</button>
+      </form>
+
+      <!-- Login Form -->
+      <form id="loginForm" style="display:none;" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Телефон или логин</label>
+          <input type="text" id="loginPhone" placeholder="+7 (999) 123-45-67" required>
+        </div>
+        <div class="form-group">
+          <label>Пароль</label>
+          <input type="password" id="loginPass" placeholder="Введите пароль" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:13px;">Войти в кабинет</button>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Переключение вкладок площадок в блоке тарифов
-    function switchTab(platform) {
-      const panels = document.querySelectorAll('.tab-panel');
-      panels.forEach(panel => panel.classList.add('hidden'));
+    const WA_PHONE = '79895513631';
+    const TG_USERNAME = 'ZlendYt';
+    const STORAGE_USERS_KEY = 'localrate_users';
+    const STORAGE_SESSION_KEY = 'localrate_current_user';
+    const STORAGE_REF_KEY = 'localrate_invited_by';
 
-      const targetPanel = document.getElementById('tab-' + platform);
-      if (targetPanel) {
-        targetPanel.classList.remove('hidden');
-      }
-
-      const buttons = document.querySelectorAll('.tab-btn');
-      buttons.forEach(btn => {
-        const isActive = btn.getAttribute('data-tab') === platform;
-        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        if (isActive) {
-          btn.classList.remove('text-ink-muted', 'hover:text-ink');
-          btn.classList.add('bg-brand', 'text-white');
-        } else {
-          btn.classList.remove('bg-brand', 'text-white');
-          btn.classList.add('text-ink-muted', 'hover:text-ink');
+    const EXAMPLES_DATA = {
+      auto: [
+        {
+          name: 'Дмитрий К.',
+          meta: 'Знаток города 8 уровня • 2 дня назад',
+          text: 'Заезжал на диагностику ходовой и замену масла. Понравилось, что мастер пригласил в ремзону, всё показал на подъёмнике и не пытался навязать лишние работы. По запчастям предложили два варианта на выбор, уложились ровно в полтора часа, как и обещали.',
+          tag: 'Яндекс.Карты • 5★'
+        },
+        {
+          name: 'Артём Савельев',
+          meta: 'Местный эксперт • 5 дней назад',
+          text: 'Делал комплексную химчистку салона перед продажей машины. Убрали даже старые пятна на светлом потолке и запах табака. Забирал авто вечером — салон полностью сухой, пластик аккуратно обработан без жирного блеска. Однозначно стоит своих денег.',
+          tag: '2ГИС • 5★'
+        },
+        {
+          name: 'Сергей В.',
+          meta: 'Знаток города 5 уровня • неделю назад',
+          text: 'Обращался по сход-развалу после замены стоек. Записали по телефону на удобное время без ожидания в очереди. Есть нормальная зона ожидания с кофе, распечатку углов до и после отдали на руки. Руль теперь стоит идеально ровно.',
+          tag: 'Яндекс.Карты • 5★'
         }
+      ],
+      beauty: [
+        {
+          name: 'Екатерина М.',
+          meta: 'Знаток города 9 уровня • вчера',
+          text: 'Была на сложном окрашивании у топ-мастера. Очень переживала за качество волос, но предварительно сделали тест-прядь и подробно обсудили оттенок. Результат получился максимально естественным, без желтизны, волосы мягкие и блестящие.',
+          tag: 'Яндекс.Карты • 5★'
+        },
+        {
+          name: 'Илья Громов',
+          meta: 'Знаток города 6 уровня • 4 дня назад',
+          text: 'Хожу сюда на стрижку и оформление бороды уже третий месяц. Нравится, что не нужно каждый раз заново объяснять, как подстричь виски — мастер помнит форму. Атмосфера спокойная, без лишней суеты, всегда предлагают хороший эспрессо.',
+          tag: '2ГИС • 5★'
+        },
+        {
+          name: 'Алина Романова',
+          meta: 'Знаток города 7 уровня • неделю назад',
+          text: 'Записывалась на маникюр с укреплением. Инструменты вскрывали из крафт-пакета прямо при мне, палитра огромная, покрытие легло ровно под кутикулу. Относила три недели без единого скола, уже записалась на следующий визит.',
+          tag: 'Яндекс.Карты • 5★'
+        }
+      ],
+      med: [
+        {
+          name: 'Ольга Николаевна',
+          meta: 'Знаток города 10 уровня • 3 дня назад',
+          text: 'Обращалась по поводу лечения сложного зуба. Врач сделал снимок, всё спокойно объяснил на экране и сразу озвучил точную стоимость до начала лечения. Анестезия подействовала мягко, вообще не почувствовала дискомфорта.',
+          tag: 'Яндекс.Карты • 5★'
+        },
+        {
+          name: 'Максим Т.',
+          meta: 'Знаток города 6 уровня • 6 дней назад',
+          text: 'Сдавал анализы и проходил УЗИ. На ресепшене оформили за пару минут, никакой живой очереди, приняли строго по записи. Результаты пришли на почту уже к вечеру того же дня. Очень вежливый и аккуратный персонал.',
+          tag: '2ГИС • 5★'
+        },
+        {
+          name: 'Наталья К.',
+          meta: 'Знаток города 8 уровня • неделю назад',
+          text: 'Приводила сына на профгигиену. Доктор сразу нашёл подход к ребёнку, всё показал в игровой форме, поэтому обошлось без слёз. После приёма дали понятные рекомендации по выбору щётки и пасты.',
+          tag: 'Google Карты • 5★'
+        }
+      ],
+      food: [
+        {
+          name: 'Андрей Белов',
+          meta: 'Знаток города 11 уровня • вчера',
+          text: 'Заходили поужинать в пятницу вечером. Несмотря на полную посадку, горячее принесли минут через 20. Том-ям насыщенный, с большим количеством морепродуктов, и отдельно порадовали авторские лимонады. Официант внимательный, но не навязчивый.',
+          tag: 'Яндекс.Карты • 5★'
+        },
+        {
+          name: 'Марина С.',
+          meta: 'Знаток города 7 уровня • 4 дня назад',
+          text: 'Очень уютное место для завтраков. Брали сырники с солёной карамелью и флэт уайт — подача красивая, кофе на хорошем зерне. Внутри тихо, можно спокойно поработать с ноутбуком утром, розетки у столиков есть.',
+          tag: '2ГИС • 5★'
+        },
+        {
+          name: 'Роман П.',
+          meta: 'Знаток города 5 уровня • неделю назад',
+          text: 'Заказывали доставку на день рождения в офис. Привезли точно ко времени, всё горячее, аккуратно упаковано в крафтовые пакеты, положили приборы и салфетки с запасом. Коллеги особенно оценили пиццу на тонком тесте.',
+          tag: 'Яндекс.Карты • 5★'
+        }
+      ],
+      service: [
+        {
+          name: 'Виктор Ш.',
+          meta: 'Знаток города 7 уровня • 2 дня назад',
+          text: 'Заказывал установку двух кондиционеров в квартиру. Монтажники приехали вовремя, работали с промышленным пылесосом, так что после бурения стены почти не осталось пыли. Трассу уложили аккуратно в короб, всё проверили при мне.',
+          tag: 'Авито • 5★'
+        },
+        {
+          name: 'Светлана Д.',
+          meta: 'Знаток города 6 уровня • 5 дней назад',
+          text: 'Вызывала мастера для ремонта стиральной машины — перестала сливать воду. Приехал через полтора часа после звонка, запчасть была с собой. Поменял помпу за 40 минут, выписал гарантийный талон. Цена совпала с озвученной по телефону.',
+          tag: 'Яндекс.Карты • 5★'
+        },
+        {
+          name: 'Павел К.',
+          meta: 'Знаток города 9 уровня • неделю назад',
+          text: 'Обращался по поводу замены разбитого экрана на ноутбуке. Сделали за один день, матрицу поставили оригинальную с отличной цветопередачей, заодно почистили систему охлаждения от пыли. Работает тихо, как новый.',
+          tag: '2ГИС • 5★'
+        }
+      ]
+    };
+
+    let targetRating = 4.8;
+    let calcCurrentState = {
+      needed: 32,
+      planTitle: 'Пакет «Максимум»: 30 отзывов + Упаковка и QR-код',
+      basePrice: 10000,
+      reviewsCount: 30
+    };
+
+    document.getElementById('headerTgLink').href = `https://t.me/${TG_USERNAME}`;
+    document.getElementById('footerTgLink').href = `https://t.me/${TG_USERNAME}`;
+
+    /* Slider Functions */
+    function moveSlide(event, btn, direction) {
+      event.preventDefault();
+      const cardMedia = btn.closest('.card-media');
+      const track = cardMedia.querySelector('.slider-track');
+      const slides = track.querySelectorAll('.slide');
+      let index = parseInt(cardMedia.dataset.index || '0', 10);
+      index = (index + direction + slides.length) % slides.length;
+      updateSlider(cardMedia, index);
+    }
+
+    function currentSlide(event, dot, index) {
+      event.preventDefault();
+      const cardMedia = dot.closest('.card-media');
+      updateSlider(cardMedia, index);
+    }
+
+    function updateSlider(cardMedia, index) {
+      cardMedia.dataset.index = index;
+      const track = cardMedia.querySelector('.slider-track');
+      track.style.transform = `translateX(-${index * 100}%)`;
+      const dots = cardMedia.querySelectorAll('.dot');
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === index);
       });
     }
 
-    // Переключатель «Было / Стало» в первом экране
-    function togglePreview(state) {
-      const btnBefore = document.getElementById('btn-before');
-      const btnAfter = document.getElementById('btn-after');
-      const ratingEl = document.getElementById('preview-rating');
-      const reviewsEl = document.getElementById('preview-reviews');
-      const badgeEl = document.getElementById('preview-badge');
-      const detailsEl = document.getElementById('preview-details');
-      const quoteEl = document.getElementById('preview-quote');
-      const starsEl = document.getElementById('preview-stars');
+    /* Detect ?ref= in URL */
+    (function checkReferralParam() {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref && ref.trim().length > 0) {
+        localStorage.setItem(STORAGE_REF_KEY, ref.trim());
+      }
+    })();
 
-      if (state === 'before') {
-        btnBefore.classList.add('bg-ink', 'text-white');
-        btnBefore.classList.remove('text-ink-muted', 'hover:text-ink');
-        btnAfter.classList.remove('bg-brand', 'text-white');
-        btnAfter.classList.add('text-ink-muted', 'hover:text-ink');
+    function getInvitedBy() {
+      return localStorage.getItem(STORAGE_REF_KEY);
+    }
 
-        ratingEl.textContent = '4.3';
-        reviewsEl.textContent = '14 отзывов • 9 место в районе';
-        badgeEl.textContent = 'Потеря до 40% заявок';
-        badgeEl.className = 'inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium bg-amber-50 text-amber-800 border border-amber-200';
-        starsEl.className = 'flex items-center gap-0.5 text-amber-400';
+    function handleImgFallback(imgEl, filename) {
+      if (!imgEl.dataset.triedRoot) {
+        imgEl.dataset.triedRoot = '1';
+        imgEl.src = filename;
+        return;
+      }
+      imgEl.closest('.card-media').classList.add('no-img');
+    }
 
-        detailsEl.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Позиция в поиске по району</span>
-            <span class="font-mono font-medium text-amber-700">9–12 место (ниже конкурентов)</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Витрина услуг и SEO-описание</span>
-            <span class="font-mono font-medium text-ink-subtle">Не заполнены</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Сбор оценок от живых клиентов</span>
-            <span class="font-mono font-medium text-ink-subtle">Отсутствует</span>
-          </div>
-        `;
+    function formatRub(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    }
 
-        quoteEl.innerHTML = `
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-semibold text-ink">Старый негативный отзыв наверху</span>
-            <span class="font-mono text-[11px] text-amber-700">Сбивает рейтинг</span>
-          </div>
-          «Долго ждал очереди, не сразу сориентировали по стоимости запчастей. Пришлось перезванивать дважды.»
-        `;
-      } else {
-        btnAfter.classList.add('bg-brand', 'text-white');
-        btnAfter.classList.remove('text-ink-muted', 'hover:text-ink');
-        btnBefore.classList.remove('bg-ink', 'text-white');
-        btnBefore.classList.add('text-ink-muted', 'hover:text-ink');
+    function normalizeKey(str) {
+      return str.trim().toLowerCase().replace(/[\s\-\(\)\+]/g, '');
+    }
 
-        ratingEl.textContent = '4.9';
-        reviewsEl.textContent = '44 отзыва • Топ-3 района';
-        badgeEl.textContent = '+68% звонков';
-        badgeEl.className = 'inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium bg-brand-soft text-brand-accent border border-brand-border';
-        starsEl.className = 'flex items-center gap-0.5 text-amber-500';
-
-        detailsEl.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Позиция в поиске по району</span>
-            <span class="font-mono font-medium text-brand-accent">1–3 место (без рекламы)</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Витрина услуг и SEO-описание</span>
-            <span class="font-mono font-medium text-ink">Заполнены (бонус)</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-ink-muted">Сбор оценок от живых клиентов</span>
-            <span class="font-mono font-medium text-ink">QR-табличка на стойке</span>
-          </div>
-        `;
-
-        quoteEl.innerHTML = `
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-semibold text-ink">Алексей К. &bull; Местный аккаунт</span>
-            <span class="font-mono text-[11px] text-brand-accent">Опубликовано</span>
-          </div>
-          «Заезжал на диагностику и замену масла. Мастер сразу показал причину по ходовой без навязывания лишних работ, по цене сошлось копейка в копейку.»
-        `;
+    function getCurrentUser() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_SESSION_KEY));
+      } catch (e) {
+        return null;
       }
     }
+
+    function openMessenger(channel, text) {
+      const encoded = encodeURIComponent(text);
+      if (channel === 'tg') {
+        window.open(`https://t.me/${TG_USERNAME}?text=${encoded}`, '_blank');
+      } else {
+        window.open(`https://wa.me/${WA_PHONE}?text=${encoded}`, '_blank');
+      }
+    }
+
+    /* Render Review Examples */
+    function renderExamples(niche, btnEl) {
+      if (btnEl) {
+        document.querySelectorAll('.niche-tab').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+      const list = EXAMPLES_DATA[niche] || EXAMPLES_DATA.auto;
+      const grid = document.getElementById('examplesGrid');
+      grid.innerHTML = list.map(item => `
+        <div class="review-example-card">
+          <div>
+            <div class="rev-header">
+              <div class="rev-author">
+                <div class="rev-avatar">${item.name.charAt(0)}</div>
+                <div>
+                  <div class="rev-name">${item.name}</div>
+                  <div class="rev-meta">${item.meta}</div>
+                </div>
+              </div>
+              <div class="rev-stars">★★★★★</div>
+            </div>
+            <p class="rev-text" style="margin-top:10px;">«${item.text}»</p>
+          </div>
+          <span class="rev-tag">${item.tag}</span>
+        </div>
+      `).join('');
+    }
+
+    /* Copy Referral Link */
+    function copyRefLink() {
+      const input = document.getElementById('refLinkInput');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard?.writeText(input.value);
+      const btn = input.nextElementSibling;
+      const orig = btn.textContent;
+      btn.textContent = 'Скопировано!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    }
+
+    /* Rating Calculator */
+    function setTargetRating(val, btn) {
+      targetRating = val;
+      document.querySelectorAll('.target-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      calculateRating();
+    }
+
+    function pluralReviews(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'отзыв';
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'отзыва';
+      return 'отзывов';
+    }
+
+    function getDiscountForPlan(reviewsCount) {
+      const user = getCurrentUser();
+      const invitedBy = getInvitedBy();
+      if (user && user.bonus > 0) return { amount: 200, reason: `бонус за регистрацию (${user.promo})` };
+      if (invitedBy && reviewsCount >= 15) return { amount: 200, reason: `реферальная скидка от «${invitedBy}» (от 15 отзывов)` };
+      return { amount: 0, reason: '' };
+    }
+
+    function calculateRating() {
+      const curR = parseFloat(document.getElementById('curRating').value) || 4.1;
+      const curN = parseInt(document.getElementById('curCount').value, 10) || 1;
+
+      const threshold = targetRating - 0.04;
+      let needed = 0;
+
+      if (curR < threshold && threshold < 5) {
+        needed = Math.ceil((curN * (threshold - curR)) / (5 - threshold));
+        if (needed < 1) needed = 1;
+      }
+
+      document.getElementById('calcNeeded').textContent = needed > 0 ? `+${needed}` : '0';
+      document.getElementById('calcNeededText').textContent = needed > 0
+        ? `${pluralReviews(needed)} на 5★ нужно до рейтинга ${targetRating.toFixed(1)}`
+        : `Ваш рейтинг уже соответствует ${targetRating.toFixed(1)} ★`;
+
+      const daysMin = Math.max(1, Math.ceil(needed / 2));
+      const daysMax = Math.max(2, needed);
+      document.getElementById('calcTimeline').textContent = needed > 0
+        ? `Ориентировочный срок плавной публикации: ~${daysMin}–${daysMax} дн.`
+        : 'Можно выбрать пакет «Тест» для поддержания активности в карточке';
+
+      let planTitle = 'Тест: 2 отзыва на Яндекс.Картах';
+      let basePrice = 1000;
+      let reviewsCount = 2;
+
+      if (needed > 35) {
+        planTitle = 'Пакет «Профи»: 50 отзывов + Полная упаковка';
+        basePrice = 15000;
+        reviewsCount = 50;
+      } else if (needed > 18) {
+        planTitle = 'Пакет «Максимум»: 30 отзывов + Упаковка и QR-код';
+        basePrice = 10000;
+        reviewsCount = 30;
+      } else if (needed > 10) {
+        planTitle = 'Пакет «Оптимальный»: 15 отзывов + Упаковка и QR-код';
+        basePrice = 6000;
+        reviewsCount = 15;
+      } else if (needed > 3) {
+        planTitle = 'Пакет «Старт»: 10 отзывов (Яндекс.Карты)';
+        basePrice = 4000;
+        reviewsCount = 10;
+      }
+
+      calcCurrentState = { needed, planTitle, basePrice, reviewsCount, curR, curN };
+      const disc = getDiscountForPlan(reviewsCount);
+      const finalPrice = Math.max(0, basePrice - disc.amount);
+
+      document.getElementById('calcPlanTitle').textContent = planTitle;
+      document.getElementById('calcPlanPrice').textContent = disc.amount > 0
+        ? `${formatRub(finalPrice)} (со скидкой 200 ₽)`
+        : formatRub(basePrice);
+    }
+
+    function orderFromCalc(channel) {
+      const user = getCurrentUser();
+      const disc = getDiscountForPlan(calcCurrentState.reviewsCount);
+      const finalPrice = Math.max(0, calcCurrentState.basePrice - disc.amount);
+
+      let text = `Здравствуйте, Михаил! Посчитал на калькуляторе LocalRate: сейчас рейтинг ${calcCurrentState.curR} (${calcCurrentState.curN} оценок), хочу поднять до ${targetRating.toFixed(1)}★ (нужно ~${calcCurrentState.needed} отзывов). Интересует ${calcCurrentState.planTitle}`;
+      if (user) {
+        text += `. Меня зовут ${user.name}, применяю ${disc.reason}, итого: ${formatRub(finalPrice)}.`;
+      } else if (disc.amount > 0) {
+        text += `. Применяю ${disc.reason}, итого: ${formatRub(finalPrice)}.`;
+      } else {
+        text += ` (${formatRub(calcCurrentState.basePrice)} по факту публикации).`;
+      }
+      openMessenger(channel, text);
+    }
+
+    /* Auth */
+    function openAuthModal(mode = 'register') {
+      document.getElementById('authModal').classList.add('open');
+      switchAuthTab(mode);
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('open');
+      document.getElementById('authError').style.display = 'none';
+    }
+
+    function switchAuthTab(mode) {
+      document.getElementById('authError').style.display = 'none';
+      const isReg = mode === 'register';
+      document.getElementById('tabRegister').classList.toggle('active', isReg);
+      document.getElementById('tabLogin').classList.toggle('active', !isReg);
+      document.getElementById('registerForm').style.display = isReg ? 'block' : 'none';
+      document.getElementById('loginForm').style.display = isReg ? 'none' : 'block';
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('authError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phoneRaw = document.getElementById('regPhone').value.trim();
+      const key = normalizeKey(phoneRaw);
+      const pass = document.getElementById('regPass').value;
+
+      if (key.length < 4) {
+        showError('Введите корректный номер телефона или ник');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '{}');
+      if (users[key]) {
+        showError('Этот контакт уже зарегистрирован. Перейдите во вкладку «Вход».');
+        return;
+      }
+
+      const userData = {
+        name,
+        phone: phoneRaw,
+        key,
+        pass,
+        bonus: 200,
+        promo: 'START200'
+      };
+
+      users[key] = userData;
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(userData));
+
+      closeAuthModal();
+      applyUserState();
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const key = normalizeKey(document.getElementById('loginPhone').value);
+      const pass = document.getElementById('loginPass').value;
+
+      const users = JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || '{}');
+      const user = users[key];
+
+      if (!user || user.pass !== pass) {
+        showError('Неверный контакт или пароль');
+        return;
+      }
+
+      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+      closeAuthModal();
+      applyUserState();
+    }
+
+    function logoutUser() {
+      localStorage.removeItem(STORAGE_SESSION_KEY);
+      applyUserState();
+    }
+
+    function applyUserState() {
+      const user = getCurrentUser();
+      const invitedBy = getInvitedBy();
+      const userPill = document.getElementById('userPill');
+      const authOpenBtn = document.getElementById('authOpenBtn');
+      const heroBonusBtn = document.getElementById('heroBonusBtn');
+      const bonusBanner = document.getElementById('bonusBanner');
+      const bonusBannerTitle = document.getElementById('bonusBannerTitle');
+      const bonusBannerDesc = document.getElementById('bonusBannerDesc');
+      const bonusBannerBtn = document.getElementById('bonusBannerBtn');
+      const refArrivalBanner = document.getElementById('refArrivalBanner');
+
+      if (invitedBy && !user) {
+        refArrivalBanner.classList.add('show');
+        document.getElementById('refArrivalText').textContent =
+          `Вы перешли по рекомендации от «${invitedBy}» — активирована скидка 200 ₽ при покупке любого пакета от 15 отзывов!`;
+      } else {
+        refArrivalBanner.classList.remove('show');
+      }
+
+      const baseUrl = window.location.origin + window.location.pathname;
+      const refInput = document.getElementById('refLinkInput');
+      const refHint = document.getElementById('refStatusHint');
+      const refRegCta = document.getElementById('refRegCta');
+
+      if (user) {
+        userPill.style.display = 'inline-flex';
+        document.getElementById('userGreeting').textContent = `${user.name} • 200 ₽`;
+        authOpenBtn.style.display = 'none';
+        heroBonusBtn.style.display = 'none';
+
+        bonusBanner.classList.add('active');
+        bonusBannerTitle.textContent = `${user.name}, ваш бонус 200 ₽ активирован!`;
+        bonusBannerDesc.textContent = 'Промокод START200 применён — все цены на сайте уже пересчитаны с учётом вашей скидки.';
+        bonusBannerBtn.style.display = 'none';
+
+        refInput.value = `${baseUrl}?ref=${encodeURIComponent(user.name)}`;
+        refHint.textContent = 'Отправьте эту ссылку другу — он получит 200 ₽ скидки при заказе от 15 отзывов';
+        refRegCta.style.display = 'none';
+      } else {
+        userPill.style.display = 'none';
+        authOpenBtn.style.display = 'inline-flex';
+        heroBonusBtn.style.display = 'inline-flex';
+
+        bonusBanner.classList.remove('active');
+        bonusBannerTitle.textContent = 'Бонус 200 ₽ на первый заказ после регистрации';
+        bonusBannerDesc.textContent = 'Зарегистрируйтесь за 15 секунд — скидка 200 ₽ автоматически применится ко всем пакетам.';
+        bonusBannerBtn.style.display = 'inline-flex';
+
+        refInput.value = baseUrl;
+        refHint.textContent = 'Зарегистрируйтесь, чтобы ссылка стала именной';
+        refRegCta.style.display = 'block';
+      }
+
+      document.querySelectorAll('.price-card').forEach(card => {
+        const base = parseInt(card.dataset.basePrice, 10);
+        const reviews = parseInt(card.dataset.reviews || '0', 10);
+        if (!base) return;
+        const oldEl = card.querySelector('.old-price');
+        const curEl = card.querySelector('.current-price');
+        const disc = getDiscountForPlan(reviews);
+
+        if (disc.amount > 0) {
+          const discounted = Math.max(0, base - disc.amount);
+          oldEl.style.display = 'inline';
+          oldEl.textContent = formatRub(base);
+          curEl.textContent = formatRub(discounted);
+          curEl.style.color = '#10B981';
+        } else {
+          oldEl.style.display = 'none';
+          curEl.textContent = formatRub(base);
+          curEl.style.color = '';
+        }
+      });
+
+      calculateRating();
+    }
+
+    function orderPlan(btn, channel = 'wa') {
+      const card = btn.closest('.price-card');
+      const plan = card.dataset.plan;
+      const base = parseInt(card.dataset.basePrice, 10);
+      const reviews = parseInt(card.dataset.reviews || '0', 10);
+      const user = getCurrentUser();
+      const disc = getDiscountForPlan(reviews);
+
+      let text = `Здравствуйте, Михаил! Хочу заказать: ${plan}.`;
+      if (base > 0) {
+        if (disc.amount > 0) {
+          const finalPrice = Math.max(0, base - disc.amount);
+          const intro = user ? `Меня зовут ${user.name} (${user.phone}). ` : '';
+          text = `Здравствуйте, Михаил! ${intro}Хочу заказать: ${plan}. Применяю ${disc.reason}, итого к оплате после публикации: ${formatRub(finalPrice)}.`;
+        } else {
+          text = `Здравствуйте, Михаил! Хочу заказать: ${plan} (${formatRub(base)} по факту публикации).`;
+        }
+      } else if (user) {
+        text = `Здравствуйте, Михаил! Меня зовут ${user.name}. Интересует расчёт по площадкам Авито / 2ГИС / Google со скидкой 200 ₽ (${user.promo}).`;
+      }
+
+      openMessenger(channel, text);
+    }
+
+    renderExamples('auto');
+    applyUserState();
   </script>
 </body>
-  </html>
+</html>
